@@ -2,93 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>iPhone Fullscreen Video Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Fullscreen Zoom</title>
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: black;
-    }
-
-    .fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-      background: black;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* 🔥 обрезает и зумит */
-    }
-
-    .thumbs {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .thumbs video {
-      width: 200px;
-      height: 120px;
-      margin: 10px;
-      border: 2px solid white;
-      object-fit: cover;
-    }
-
-    p { color: white; font-family: sans-serif; }
+    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    .video-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+    .vjs-tech { object-fit: cover; }
   </style>
 </head>
 <body>
-  <p>Нажми на видео для fullscreen</p>
+  <!-- Вертикальное видео -->
+  <video id="vertical-video" class="video-js" controls preload="auto">
+    <source src="vertical-video.mp4" type="video/mp4">
+  </video>
 
-  <div class="thumbs">
-    <!-- Горизонтальное видео (16:9) -->
-    <video id="landscape" muted playsinline preload="metadata">
-      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-    </video>
+  <!-- Горизонтальное видео -->
+  <video id="horizontal-video" class="video-js" controls preload="auto">
+    <source src="horizontal-video.mp4" type="video/mp4">
+  </video>
 
-    <!-- Вертикальное видео (9:16, больше похоже на TikTok/Stories) -->
-    <video id="portrait" muted playsinline preload="metadata">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-woman-posing-on-a-beach-1190-large.mp4" type="video/mp4">
-    </video>
-  </div>
-
+  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+  <script src="https://unpkg.com/videojs-zoom@latest/dist/videojs-zoom.min.js"></script>
   <script>
-    function openFullscreen(video) {
-      // создаём клон, чтобы fullscreen был отдельным
-      const fsWrapper = document.createElement("div");
-      fsWrapper.classList.add("fullscreen");
+    // Функция инициализации плеера
+    function initPlayer(videoId) {
+      const player = videojs(videoId, {
+        fluid: true,
+        responsive: true,
+        fill: true
+      });
 
-      const fsVideo = video.cloneNode(true);
-      fsVideo.autoplay = true;
-      fsVideo.controls = true;
-      fsVideo.muted = false; // можно включить звук
-      fsWrapper.appendChild(fsVideo);
-
-      document.body.appendChild(fsWrapper);
-
-      fsVideo.play();
-
-      // выход по тапу
-      fsVideo.addEventListener("click", () => {
-        fsVideo.pause();
-        fsWrapper.remove();
+      // Авто-зум и полноэкранный режим при клике
+      player.on('click', () => {
+        player.zoom({ zoom: 1.5 }); // Зум 1.5x
+        player.requestFullscreen(); // Полноэкранный режим
+        player.play();
       });
     }
 
-    document.getElementById("landscape").addEventListener("click", function() {
-      openFullscreen(this);
-    });
-
-    document.getElementById("portrait").addEventListener("click", function() {
-      openFullscreen(this);
-    });
+    // Инициализация обоих плееров
+    initPlayer('vertical-video');
+    initPlayer('horizontal-video');
   </script>
 </body>
 </html>
