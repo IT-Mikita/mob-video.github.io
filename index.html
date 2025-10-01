@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        :root {
+            --video-width: 100vw;
+            --video-height: 100vh;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+        }
+        
+        #player {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Кастомизация Plyr для полноэкранного режима */
+        .plyr--fullscreen-active .plyr__video-wrapper {
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video id="player" playsinline controls data-plyr-config='{"fullscreen": {"enabled": true, "fallback": true, "iosNative": true}}'>
+            <source src="https://app.kickstart.fitness/static/images/video-test.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        const player = new Plyr('#player', {
+            fullscreen: {
+                enabled: true,
+                fallback: true,
+                iosNative: true,
+                container: null // Использует родительский контейнер
+            },
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+            autoplay: true,
+            muted: true,
+            hideControls: false,
+            ratio: '16:9'
+        });
+        
+        // Автоматическое полноэкранное воспроизведение
+        player.on('ready', event => {
+            player.play();
+            
+            // Попытка полноэкранного режима после начала воспроизведения
+            setTimeout(() => {
+                if (player.fullscreen.active) return;
+                
+                player.fullscreen.enter().catch(error => {
+                    console.log('Fullscreen error:', error);
+                });
+            }, 1000);
+        });
+        
+        // Обработка изменения ориентации
+        screen.orientation.addEventListener('change', function() {
+            if (!player.fullscreen.active) {
+                player.fullscreen.enter();
+            }
+        });
+    </script>
+</body>
+</html>
