@@ -1,92 +1,88 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <style>
-        :root {
-            --video-width: 100vw;
-            --video-height: 100vh;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #000;
-            overflow: hidden;
-        }
-        
-        .container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-        }
-        
-        #player {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Кастомизация Plyr для полноэкранного режима */
-        .plyr--fullscreen-active .plyr__video-wrapper {
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Полноэкранное видео</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: #000;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #1c73e8;
+      color: white;
+    }
+
+    .video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover; /* магия для безрамочного фуллскрина */
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <video id="player" playsinline controls data-plyr-config='{"fullscreen": {"enabled": true, "fallback": true, "iosNative": true}}'>
-            <source src="https://app.kickstart.fitness/static/images/video-test.mp4" type="video/mp4">
-        </video>
-    </div>
 
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script>
-        const player = new Plyr('#player', {
-            fullscreen: {
-                enabled: true,
-                fallback: true,
-                iosNative: true,
-                container: null // Использует родительский контейнер
-            },
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-            autoplay: true,
-            muted: true,
-            hideControls: false,
-            ratio: '16:9'
-        });
-        
-        // Автоматическое полноэкранное воспроизведение
-        player.on('ready', event => {
-            player.play();
-            
-            // Попытка полноэкранного режима после начала воспроизведения
-            setTimeout(() => {
-                if (player.fullscreen.active) return;
-                
-                player.fullscreen.enter().catch(error => {
-                    console.log('Fullscreen error:', error);
-                });
-            }, 1000);
-        });
-        
-        // Обработка изменения ориентации
-        screen.orientation.addEventListener('change', function() {
-            if (!player.fullscreen.active) {
-                player.fullscreen.enter();
-            }
-        });
-    </script>
+  <button onclick="openVideo('vertical')">Открыть вертикальное видео</button>
+  <button onclick="openVideo('horizontal')">Открыть горизонтальное видео</button>
+
+  <div id="videoContainer" class="video-container">
+    <video id="player" autoplay playsinline controls muted></video>
+  </div>
+
+  <script>
+    function openVideo(type) {
+      const container = document.getElementById('videoContainer');
+      const player = document.getElementById('player');
+
+      if (type === 'vertical') {
+        player.src = "https://www.w3schools.com/html/mov_bbb.mp4"; // заменишь на вертикальное видео
+      } else {
+        player.src = "https://www.w3schools.com/html/movie.mp4"; // заменишь на горизонтальное видео
+      }
+
+      container.style.display = "flex";
+      player.play();
+    }
+
+    // Закрытие видео по клику вне ролика
+    document.getElementById('videoContainer').addEventListener('click', (e) => {
+      if (e.target.id === 'videoContainer') {
+        const player = document.getElementById('player');
+        player.pause();
+        player.src = "";
+        e.target.style.display = "none";
+      }
+    });
+  </script>
+
 </body>
 </html>
