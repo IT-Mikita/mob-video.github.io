@@ -1,88 +1,66 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Полноэкранное видео</title>
+  <title>Fullscreen Video Test</title>
   <style>
-    html, body {
+    body, html {
       margin: 0;
-      padding: 0;
       height: 100%;
-      width: 100%;
-      background: #000;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #1c73e8;
-      color: white;
-    }
-
-    .video-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
       background: black;
-      display: none;
+      display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      flex-direction: column;
     }
-
     video {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover; /* магия для безрамочного фуллскрина */
+      width: 80%;
+      max-height: 80%;
+      margin: 10px;
+      cursor: pointer;
+      border: 2px solid #fff;
+      object-fit: cover; /* fill screen correctly */
+    }
+    p {
+      color: white;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
+  <p>Click any video to play in fullscreen</p>
 
-  <button onclick="openVideo('vertical')">Открыть вертикальное видео</button>
-  <button onclick="openVideo('horizontal')">Открыть горизонтальное видео</button>
+  <!-- Landscape video -->
+  <video id="videoLandscape" muted playsinline>
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    Your browser does not support video.
+  </video>
 
-  <div id="videoContainer" class="video-container">
-    <video id="player" autoplay playsinline controls muted></video>
-  </div>
+  <!-- Portrait video (tall aspect ratio) -->
+  <video id="videoPortrait" muted playsinline>
+    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+    Your browser does not support video.
+  </video>
 
   <script>
-    function openVideo(type) {
-      const container = document.getElementById('videoContainer');
-      const player = document.getElementById('player');
-
-      if (type === 'vertical') {
-        player.src = "https://www.w3schools.com/html/mov_bbb.mp4"; // заменишь на вертикальное видео
-      } else {
-        player.src = "https://www.w3schools.com/html/movie.mp4"; // заменишь на горизонтальное видео
+    function makeFullscreen(video) {
+      video.play();
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) { // Safari
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) { // IE/Edge
+        video.msRequestFullscreen();
       }
-
-      container.style.display = "flex";
-      player.play();
     }
 
-    // Закрытие видео по клику вне ролика
-    document.getElementById('videoContainer').addEventListener('click', (e) => {
-      if (e.target.id === 'videoContainer') {
-        const player = document.getElementById('player');
-        player.pause();
-        player.src = "";
-        e.target.style.display = "none";
-      }
+    document.getElementById('videoLandscape').addEventListener('click', function() {
+      makeFullscreen(this);
+    });
+
+    document.getElementById('videoPortrait').addEventListener('click', function() {
+      makeFullscreen(this);
     });
   </script>
-
 </body>
 </html>
