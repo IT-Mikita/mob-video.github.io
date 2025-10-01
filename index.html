@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fullscreen Video Test</title>
+  <title>Fullscreen Video Mobile Test</title>
   <style>
     body, html {
       margin: 0;
@@ -15,11 +15,11 @@
     }
     video {
       width: 80%;
-      max-height: 80%;
+      max-height: 40%;
       margin: 10px;
       cursor: pointer;
       border: 2px solid #fff;
-      object-fit: cover; /* fill screen correctly */
+      object-fit: cover;
     }
     p {
       color: white;
@@ -28,38 +28,40 @@
   </style>
 </head>
 <body>
-  <p>Click any video to play in fullscreen</p>
+  <p>Tap a video to play fullscreen</p>
 
   <!-- Landscape video -->
-  <video id="videoLandscape" muted playsinline>
+  <video id="videoLandscape" playsinline muted>
     <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-    Your browser does not support video.
   </video>
 
-  <!-- Portrait video (tall aspect ratio) -->
-  <video id="videoPortrait" muted playsinline>
+  <!-- Portrait video -->
+  <video id="videoPortrait" playsinline muted>
     <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-    Your browser does not support video.
   </video>
 
   <script>
-    function makeFullscreen(video) {
+    function playFullscreen(video) {
+      // Start playback
       video.play();
+
+      // Try fullscreen depending on platform
       if (video.requestFullscreen) {
         video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) { // Safari
-        video.webkitRequestFullscreen();
-      } else if (video.msRequestFullscreen) { // IE/Edge
+      } else if (video.webkitEnterFullscreen) { 
+        // iOS Safari fallback
+        video.webkitEnterFullscreen();
+      } else if (video.msRequestFullscreen) {
         video.msRequestFullscreen();
       }
     }
 
-    document.getElementById('videoLandscape').addEventListener('click', function() {
-      makeFullscreen(this);
+    document.getElementById('videoLandscape').addEventListener('click', function () {
+      playFullscreen(this);
     });
 
-    document.getElementById('videoPortrait').addEventListener('click', function() {
-      makeFullscreen(this);
+    document.getElementById('videoPortrait').addEventListener('click', function () {
+      playFullscreen(this);
     });
   </script>
 </body>
